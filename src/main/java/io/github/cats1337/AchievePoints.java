@@ -3,20 +3,21 @@ package io.github.cats1337;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
-public class AchievePoints {
+public class AchievePoints{
     // points system
     // points are given for advancements
-
+    
     // 5 points for regular "task" advancements
     // 10 points for goals
     // 15 points for challenges
-
+    
     // store the points in a txt file
-
+    
     // getPlayer
     static Player getPlayer(String playerName) {
         Player player = Bukkit.getPlayer(playerName);
@@ -28,7 +29,8 @@ public class AchievePoints {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         Objective objective = scoreboard.getObjective("points");
         if (objective == null) {
-            objective = scoreboard.registerNewObjective("points", "dummy", ChatColor.GREEN + "Points");
+            // add the objective
+            objective = scoreboard.registerNewObjective("points", Criteria.DUMMY, ChatColor.GREEN + "Points");
         }
         Score score = objective.getScore(player.getName());
         score.setScore(score.getScore() + amount);
@@ -41,7 +43,7 @@ public class AchievePoints {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         Objective objective = scoreboard.getObjective("points");
         if (objective == null) {
-            objective = scoreboard.registerNewObjective("points", "dummy", ChatColor.GREEN + "Points");
+            objective = scoreboard.registerNewObjective("points", Criteria.DUMMY, ChatColor.GREEN + "Points");
         }
         Score score = objective.getScore(player.getName());
         player.sendMessage(score.getScore() + " points!");
@@ -53,7 +55,7 @@ public class AchievePoints {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         Objective objective = scoreboard.getObjective("points");
         if (objective == null) {
-            objective = scoreboard.registerNewObjective("points", "dummy", ChatColor.GREEN + "Points");
+            objective = scoreboard.registerNewObjective("points", Criteria.DUMMY, ChatColor.GREEN + "Points");
         }
         Score score = objective.getScore(player.getName());
         score.setScore(amount);
@@ -66,7 +68,7 @@ public class AchievePoints {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         Objective objective = scoreboard.getObjective("points");
         if (objective == null) {
-            objective = scoreboard.registerNewObjective("points", "dummy", ChatColor.GREEN + "Points");
+            objective = scoreboard.registerNewObjective("points", Criteria.DUMMY, ChatColor.GREEN + "Points");
         }
         Score score = objective.getScore(player.getName());
         score.setScore(score.getScore() - amount);
@@ -79,12 +81,11 @@ public class AchievePoints {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         Objective objective = scoreboard.getObjective("points");
         if (objective == null) {
-            objective = scoreboard.registerNewObjective("points", "dummy", ChatColor.GREEN + "Points");
+            objective = scoreboard.registerNewObjective("points", Criteria.DUMMY, ChatColor.GREEN + "Points");
         }
         Score score = objective.getScore(player.getName());
         score.setScore(0);
         player.sendMessage(ChatColor.GREEN + "Points reset!");
         return null;
     }
-
 }

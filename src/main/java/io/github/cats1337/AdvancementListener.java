@@ -1,6 +1,7 @@
 package io.github.cats1337;
 
 import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementDisplayType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,35 +21,20 @@ public class AdvancementListener implements Listener {
         System.out.println(message);
         player.sendMessage(message);
 
-        if (type.equals("challenge")) {
+        if (type.equals(AdvancementDisplayType.CHALLENGE)) {
             System.out.println("CHALLENGE");
             AchievePoints.addPoints(player, 15);
         }
-        if (type.equals("goal")) {
+        if (type.equals(AdvancementDisplayType.GOAL)) {
             System.out.println("GOAL");
             AchievePoints.addPoints(player, 10);
         }
-        if (type.equals("task")) {
+        if (type.equals(AdvancementDisplayType.TASK)) {
             System.out.println("TASK");
             AchievePoints.addPoints(player, 5);
         }
     }
 
-    static enum AdvancementDisplayType{
-        TASK("task"),
-        GOAL("goal"),
-        CHALLENGE("challenge");
-
-        private final String type;
-
-        AdvancementDisplayType(String type) {
-            this.type = type;
-        }
-
-        public String getType() {
-            return type;
-        }
-    }
 }
 
 
