@@ -1,91 +1,67 @@
 package io.github.cats1337;
 
-import org.bukkit.Bukkit;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Criteria;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
 
-public class AchievePoints{
+public class AchievePoints {
     // points system
     // points are given for advancements
-    
+
     // 5 points for regular "task" advancements
     // 10 points for goals
     // 15 points for challenges
-    
-    // store the points in a txt file
-    
-    // getPlayer
-    static Player getPlayer(String playerName) {
-        Player player = Bukkit.getPlayer(playerName);
-        return player;
-    }
-    
-    // give the player points
-    static Object addPoints(Player player, int amount) {
-        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-        Objective objective = scoreboard.getObjective("points");
-        if (objective == null) {
-            // add the objective
-            objective = scoreboard.registerNewObjective("points", Criteria.DUMMY, ChatColor.GREEN + "Points");
-        }
-        Score score = objective.getScore(player.getName());
-        score.setScore(score.getScore() + amount);
-        player.sendMessage(ChatColor.GREEN + "+" + amount + " points!");
-        return null;
-    }
+
+    // store the points in an arraylist
+    private static Map<String, Integer> points = new HashMap<String, Integer>();
+
+    // static Player getPlayer(String playerName) {
+    //     Player player = Bukkit.getPlayer(playerName);
+    //     return player;
+    // }
 
     // get the player's points
-    static Score getPoints(Player player) {
-        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-        Objective objective = scoreboard.getObjective("points");
-        if (objective == null) {
-            objective = scoreboard.registerNewObjective("points", Criteria.DUMMY, ChatColor.GREEN + "Points");
+    public static int getPoints(Player player) {
+        String playerName = player.getName();
+        if (!points.containsKey(playerName)) {
+            return 0;
         }
-        Score score = objective.getScore(player.getName());
-        player.sendMessage(score.getScore() + " points!");
-        return score;
+        return points.get(playerName);
+    }
+
+    // give the player points
+    public static void addPoints(Player player, int amount) {
+        String playerName = player.getName();
+        int currentPoints = getPoints(player);
+        points.put(playerName, currentPoints + amount);
+        player.sendMessage(ChatColor.GREEN + "+" + amount + " points!");
+        Main.LOGGER.info(playerName + " now has " + (currentPoints + amount) + " points!");
+        // get players total points
+        int totalPoints = getPoints(player);
+        player.sendMessage(playerName + " now has " + totalPoints + " points!");
     }
 
     // set the player's points
-    static Object setPoints(Player player, int amount) {
-        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-        Objective objective = scoreboard.getObjective("points");
-        if (objective == null) {
-            objective = scoreboard.registerNewObjective("points", Criteria.DUMMY, ChatColor.GREEN + "Points");
-        }
-        Score score = objective.getScore(player.getName());
-        score.setScore(amount);
+    public static void setPoints(Player player, int amount) {
+        String playerName = player.getName();
+        points.put(playerName, amount);
         player.sendMessage(ChatColor.GREEN + "Points set to " + amount + "!");
-        return null;
     }
 
     // remove the player's points
-    static Object removePoints(Player player, int amount) {
-        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-        Objective objective = scoreboard.getObjective("points");
-        if (objective == null) {
-            objective = scoreboard.registerNewObjective("points", Criteria.DUMMY, ChatColor.GREEN + "Points");
-        }
-        Score score = objective.getScore(player.getName());
-        score.setScore(score.getScore() - amount);
+    public static void removePoints(Player player, int amount) {
+        String playerName = player.getName();
+        int currentPoints = getPoints(player);
+        points.put(playerName, Math.max(0, currentPoints - amount));
         player.sendMessage(ChatColor.GREEN + "-" + amount + " points!");
-        return null;
     }
 
     // reset the player's points
-    static Object resetPoints(Player player) {
-        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-        Objective objective = scoreboard.getObjective("points");
-        if (objective == null) {
-            objective = scoreboard.registerNewObjective("points", Criteria.DUMMY, ChatColor.GREEN + "Points");
-        }
-        Score score = objective.getScore(player.getName());
-        score.setScore(0);
+    public static void resetPoints(Player player) {
+        String playerName = player.getName();
+        points.put(playerName, 0);
         player.sendMessage(ChatColor.GREEN + "Points reset!");
-        return null;
     }
 }

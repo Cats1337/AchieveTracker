@@ -3,17 +3,23 @@ main: io.github.cats1337.Main
 version: 0.0.2
 api-version: 1.15
 author: Cats
+
+permissions:
+  points.view:
+    description: View your points
+    default: true
+
+
 commands:
   points:
-    description: Show your points
-    usage: /points [set|add|remove|reset] <player> [points]
-    default: op
-    permission:
-      points.set
-      points.add
-      points.remove
-      points.reset
-    permission-message: You don't have permission to this, stoopid
+    # usage: /points [set|add|remove|reset] <player> [points]
+    # default: op
+    # permission:
+    #   points.set
+    #   points.add
+    #   points.remove
+    #   points.reset
+    # permission-message: You don't have permission to this, stoopid
 
 
   # permissions:

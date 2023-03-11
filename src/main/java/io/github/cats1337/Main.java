@@ -25,6 +25,13 @@ public class Main extends JavaPlugin implements Listener {
         // Plugin shutdown logic
         getLogger().info("AchieveTracker is disabled!");
         System.out.println("AchieveTracker is disabled! (*)");
+        
+        // *****************************
+        // save player points to a file
+        // *****************************
+
+        // rollback prevention
+
     }
     
 
