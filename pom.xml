@@ -16,10 +16,10 @@
   </properties>
 
     <repositories>
-      <repository>
-          <id>achievetracker-repo</id>
-          <url>https://github.com/Cats1337/AchieveTracker</url>
-      </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
   </repositories>
 
   <dependencies>
