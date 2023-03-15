@@ -45,9 +45,11 @@ public class AchievePoints {
 
     // set the player's points
     public static void setPoints(Player player, int amount) {
-        String playerName = player.getName();
-        points.put(playerName, amount);
-        player.sendMessage(ChatColor.GREEN + "Points set to " + amount + "!");
+        if(player != null) {
+            String playerName = player.getName();
+            points.put(playerName, amount);
+            player.sendMessage(ChatColor.GREEN + "Points set to " + amount + "!");
+        }
     }
 
     // remove the player's points
