@@ -52,18 +52,26 @@ public class AchievePoints {
         }
     }
 
+    // When player joins, set their points to their points
+    public static void joinSet(Player player, int amount) {
+        if (player != null) {
+            String playerName = player.getName();
+            points.put(playerName, amount);
+        }
+    }
+
     // remove the player's points
     public static void removePoints(Player player, int amount) {
         String playerName = player.getName();
         int currentPoints = getPoints(player);
         points.put(playerName, Math.max(0, currentPoints - amount));
-        player.sendMessage(ChatColor.GREEN + "-" + amount + " points!");
+        player.sendMessage(ChatColor.RED + "-" + amount + " points!");
     }
 
     // reset the player's points
     public static void resetPoints(Player player) {
         String playerName = player.getName();
         points.put(playerName, 0);
-        player.sendMessage(ChatColor.GREEN + "Points reset!");
+        player.sendMessage(ChatColor.GOLD + "Points reset!");
     }
 }

@@ -1,7 +1,7 @@
 name: AchieveTracker
 main: io.github.cats1337.Main
-version: 0.0.2
-api-version: 1.15
+version: 0.0.3
+api-version: 1.18
 author: Cats
 
 permissions:
@@ -29,25 +29,25 @@ commands:
       usage: /points set <player> <points>
       permission: points.set
       permission-message : You don't have permission to this, stoopid
-      aliases: [set]
+      # aliases: [set]
 
     addpoints:
       description: Add points
       usage: /points add <player> <points>
       permission: points.add
       permission-message : You don't have permission to this, stoopid
-      aliases: [add]
+      # aliases: [add]
 
     removepoints:
       description: Remove points
       usage: /points remove <player> <points>
       permission: points.remove
       permission-message : You don't have permission to this, stoopid
-      aliases: [remove]
+      # aliases: [remove]
 
     resetpoints:
       description: Reset points
       usage: /points reset <player>
       permission: points.reset
       permission-message : You don't have permission to this, stoopid
-      aliases: [reset]
+      # aliases: [reset]
