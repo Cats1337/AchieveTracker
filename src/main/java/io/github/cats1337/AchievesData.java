@@ -116,7 +116,7 @@ public class AchievesData {
                 UUID id = UUID.fromString(tokens[0].trim());
                 if (id.equals(playerID)) {
                     int points = Integer.parseInt(tokens[1].trim());
-                    loadData();
+                    // loadData();
                     System.out.println("Player: " + player + " | Points: " + points);
                     AchievePoints.joinSet(player, points);
                 }
