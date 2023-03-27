@@ -82,7 +82,7 @@ public class AchieveData {
         Bukkit.getServer().getOnlinePlayers().forEach(player -> {
             final UUID playerId = player.getUniqueId();
             final int currentPoints = AchievePoints.getPoints(player);
-                pointsMap.put(playerId, currentPoints);
+            pointsMap.put(playerId, currentPoints);
         });
 
         // Save data to file (overwriting existing file)
@@ -93,7 +93,7 @@ public class AchieveData {
                 out.write(playerId + "," + points);
                 out.newLine();
             }
-            // AchieveMain.LOGGER.log(Level.INFO, "Data saved");
+            // AchieveMain.LOGGER.info("Data saved");
         } catch (IOException e) {
             e.printStackTrace();
         }

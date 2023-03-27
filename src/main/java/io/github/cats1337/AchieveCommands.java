@@ -57,7 +57,7 @@ public class AchieveCommands implements CommandExecutor {
                     // set the player's points if they are online
                     if (player != null) {
                         AchievePoints.setPoints(player, amount);
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eSet &b" + player.getName() + " &7's points to &e" + amount + " &7!"));
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eSet &b" + player.getName() + "&7's points to &e" + amount + " &7!"));
 
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Your points have been &eset &7to &e" + amount + " &7!"));
                     } 
@@ -67,9 +67,9 @@ public class AchieveCommands implements CommandExecutor {
                         String[] offlinePlayerData = offlinePlayer.split(",");
                         String offlinePlayerName = offlinePlayerData[0];
                         AchievePoints.setOfflinePoints(offlinePlayerName, amount);
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eSet &b" + offlinePlayerName + " &7's points to &e" + amount + " &7!"));
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eSet &b" + offlinePlayerName + "&7's points to &e" + amount + " &7!"));
                     }
-                    else {
+                    else if(player == null && AchieveData.playerCheck(args[1]) == null) {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Player not found!"));
                     }
                     AchieveData.saveData();
@@ -79,7 +79,7 @@ public class AchieveCommands implements CommandExecutor {
                 } if (!cmdSender.hasPermission("points.set")) {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission to use this command!"));
             }
-
+            return true;
         }
 
         // add points /points add <player> <amount>
@@ -106,7 +106,7 @@ public class AchieveCommands implements CommandExecutor {
                         AchieveMain.LOGGER.info(sender + " added " + amount + " points to " + offlinePlayerName + "!");
                     }
                     
-                    else {
+                    else if (player == null && AchieveData.playerCheck(args[1]) == null) {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Player not found!"));
                     }
                 } else {
@@ -114,7 +114,7 @@ public class AchieveCommands implements CommandExecutor {
             } if (!cmdSender.hasPermission("points.add")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission to use this command!"));
             }
-
+            return true;
         }
 
         // remove points /points remove <player> <amount>
@@ -141,7 +141,7 @@ public class AchieveCommands implements CommandExecutor {
                         AchieveMain.LOGGER.info(sender + " removed " + amount + " points from " + offlinePlayerName + "!");
                     }
                     
-                    else {
+                    else if (player == null && AchieveData.playerCheck(args[1]) == null) {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Player not found!"));
                     }
                 } else {
@@ -149,7 +149,7 @@ public class AchieveCommands implements CommandExecutor {
             }  if (!cmdSender.hasPermission("points.remove")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission to use this command!"));
             }
-
+            return true;
         }
 
         // reset points /points reset <player>
@@ -174,7 +174,7 @@ public class AchieveCommands implements CommandExecutor {
                         AchieveMain.LOGGER.info(sender + " reset " + offlinePlayerName + "'s points!");
                     }
                     
-                    else {
+                    else if (player == null && AchieveData.playerCheck(args[1]) == null) {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Player not found!"));
                     }
                 } else {
@@ -182,8 +182,9 @@ public class AchieveCommands implements CommandExecutor {
                 } if (!cmdSender.hasPermission("points.reset")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission to use this command!"));
             }
+            return true;
             }
-            // Hologram
+            
             // Hologram Reload /points hologram reload
             else if (args.length == 2 && args[0].equalsIgnoreCase("hologram") && args[1].equalsIgnoreCase("reload")) {
                 Player cmdSender = (Player) sender;
@@ -193,6 +194,7 @@ public class AchieveCommands implements CommandExecutor {
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission to use this command!"));
                 }
+                return true;
             }
             // Hologram Move /points hologram move <x,y,z>
             else if (args.length == 5 && args[0].equalsIgnoreCase("hologram") && args[1].equalsIgnoreCase("move")) {
@@ -207,6 +209,7 @@ public class AchieveCommands implements CommandExecutor {
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission to use this command!"));
                 }
+                return true;
             }
             // Hologram MoveHere /points hologram movehere
             else if (args.length == 2 && args[0].equalsIgnoreCase("hologram") && args[1].equalsIgnoreCase("movehere")) {
@@ -222,6 +225,7 @@ public class AchieveCommands implements CommandExecutor {
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission to use this command!"));
                 }
+                return true;
             }
             // Hologram align /points hologram align
             else if (args.length == 2 && args[0].equalsIgnoreCase("hologram") && args[1].equalsIgnoreCase("align")) {
@@ -232,6 +236,7 @@ public class AchieveCommands implements CommandExecutor {
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission to use this command!"));
                 }
+                return true;
             }
             else if (args.length == 1 && args[0].equalsIgnoreCase("leaderboard") || args[0].equalsIgnoreCase("lb")) {
                 Player cmdSender = (Player) sender;
@@ -244,6 +249,7 @@ public class AchieveCommands implements CommandExecutor {
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission to use this command!"));
                 }
+                return true;
             }
 
             // if the player is online, get their points
@@ -266,7 +272,10 @@ public class AchieveCommands implements CommandExecutor {
                     int offlinePlayerPoints = Integer.parseInt(offlinePlayerData[1]);
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                             "&3" + offlinePlayerName + " &7has &b" + offlinePlayerPoints + " &7points!"));
-                } else if (player == null && AchieveData.playerCheck(args[0]) == null && !args[0].equalsIgnoreCase("help") && !args[0].equalsIgnoreCase("set") && !args[0].equalsIgnoreCase("add") && !args[0].equalsIgnoreCase("remove") && !args[0].equalsIgnoreCase("reset") && !args[0].equalsIgnoreCase("leaderboard") && !args[0].equalsIgnoreCase("lb")) {
+                } 
+
+                // if not a player, and not a command, and not a player in the achieves.txt file, then the player is not found
+                else if (args.length == 1 && player == null && AchieveData.playerCheck(args[0]) == null && !args[0].equalsIgnoreCase("help") && !args[0].equalsIgnoreCase("set") && !args[0].equalsIgnoreCase("add") && !args[0].equalsIgnoreCase("remove") && !args[0].equalsIgnoreCase("reset") && !args[0].equalsIgnoreCase("leaderboard") && !args[0].equalsIgnoreCase("lb")) {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Player not found!"));
                 }
             }

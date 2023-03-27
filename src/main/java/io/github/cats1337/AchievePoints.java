@@ -26,10 +26,6 @@ public class AchievePoints {
         int currentPoints = getPoints(player);
         points.put(playerName, currentPoints + amount);
         player.sendMessage(ChatColor.GREEN + "+" + amount + " points!");
-        AchieveMain.LOGGER.info(playerName + " now has " + (currentPoints + amount) + " points!");
-        // get players total points
-        int totalPoints = getPoints(player);
-        player.sendMessage(playerName + " now has " + totalPoints + " points!");
     }
 
     // set the player's points
