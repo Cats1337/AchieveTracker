@@ -1,8 +1,13 @@
 name: AchieveTracker
-main: io.github.cats1337.Main
-version: 0.0.3
-api-version: 1.18
+main: io.github.cats1337.AchieveMain
+version: 1.0.6
+api-version: 1.19
 author: Cats
+description: Get points for advancements/achievements
+prefix: AchieveTracker
+
+softdepend: [HolographicDisplays]
+
 
 permissions:
   points.set:
@@ -17,6 +22,38 @@ permissions:
   points.reset:
     description: Reset points
     default: op
+  points.hologram:
+    description: Holograms
+    default: op
+  points.hologram.reload:
+    description: Reload hologram
+    default: op
+  points.hologram.move:
+    description: Move hologram
+    default: op
+  points.hologram.movehere:
+    description: Move hologram here
+    default: op
+  points.*:
+    description: All permissions
+    default: op
+    children:
+      points.set: true
+      points.add: true
+      points.remove: true
+      points.reset: true
+      points.hologram: true
+      points.hologram.reload: true
+      points.hologram.move: true
+      points.hologram.movehere: true
+  points.hologram.*:
+    description: All hologram permissions
+    default: op
+    children:
+      points.hologram: true
+      points.hologram.reload: true
+      points.hologram.move: true
+      points.hologram.movehere: true
 
 commands:
     points:
@@ -24,30 +61,50 @@ commands:
       usage: /points
       aliases: [setpoints, addpoints, removepoints, resetpoints]
 
-    setpoints:
+    pointsset:
       description: Set points
       usage: /points set <player> <points>
       permission: points.set
       permission-message : You don't have permission to this, stoopid
       # aliases: [set]
 
-    addpoints:
+    pointsadd:
       description: Add points
       usage: /points add <player> <points>
       permission: points.add
       permission-message : You don't have permission to this, stoopid
       # aliases: [add]
 
-    removepoints:
+    pointsremove:
       description: Remove points
       usage: /points remove <player> <points>
       permission: points.remove
       permission-message : You don't have permission to this, stoopid
       # aliases: [remove]
 
-    resetpoints:
+    pointsreset:
       description: Reset points
       usage: /points reset <player>
       permission: points.reset
       permission-message : You don't have permission to this, stoopid
       # aliases: [reset]
+
+    hologrampoints:
+      description: Show holograms with points
+      usage: /points hologram
+      permission: points.hologram
+
+    hologrampointsreload:
+      description: Reload holograms with points
+      usage: /points hologram reload
+      permission: points.hologram.reload
+
+    hologrampointsmove:
+      description: Move holograms with points
+      usage: /points hologram move <x> <y> <z>
+      permission: points.hologram.move
+
+    hologrampointsmovehere:
+      description: Move holograms with points
+      usage: /points hologram movehere
+      permission: points.hologram.movehere

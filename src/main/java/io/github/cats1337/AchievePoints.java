@@ -3,24 +3,13 @@ package io.github.cats1337;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class AchievePoints {
-    // points system
-    // points are given for advancements
-
-    // 5 points for regular "task" advancements
-    // 10 points for goals
-    // 15 points for challenges
-
     // store the points in an arraylist
     private static Map<String, Integer> points = new HashMap<String, Integer>();
-
-    // static Player getPlayer(String playerName) {
-    //     Player player = Bukkit.getPlayer(playerName);
-    //     return player;
-    // }
 
     // get the player's points
     public static int getPoints(Player player) {
@@ -37,7 +26,7 @@ public class AchievePoints {
         int currentPoints = getPoints(player);
         points.put(playerName, currentPoints + amount);
         player.sendMessage(ChatColor.GREEN + "+" + amount + " points!");
-        Main.LOGGER.info(playerName + " now has " + (currentPoints + amount) + " points!");
+        AchieveMain.LOGGER.info(playerName + " now has " + (currentPoints + amount) + " points!");
         // get players total points
         int totalPoints = getPoints(player);
         player.sendMessage(playerName + " now has " + totalPoints + " points!");
@@ -74,4 +63,39 @@ public class AchievePoints {
         points.put(playerName, 0);
         player.sendMessage(ChatColor.GOLD + "Points reset!");
     }
+
+    // set offline player's points
+    public static void setOfflinePoints(String playerName, int amount) {
+        points.put(playerName, amount);
+        AchieveData.saveData();
+    }
+
+    // get offline player's points
+    public static int getOfflinePoints(String playerName) {
+        if (!points.containsKey(playerName)) {
+            return 0;
+        }
+        return points.get(playerName);
+    }
+
+    // add offline player's points
+    public static void addOfflinePoints(String playerName, int amount) {
+        int currentPoints = getOfflinePoints(playerName);
+        points.put(playerName, currentPoints + amount);
+        AchieveData.saveData();
+    }
+
+    // remove offline player's points
+    public static void removeOfflinePoints(String playerName, int amount) {
+        int currentPoints = getOfflinePoints(playerName);
+        points.put(playerName, Math.max(0, currentPoints - amount));
+        AchieveData.saveData();
+    }
+
+    // reset offline player's points
+    public static void resetOfflinePoints(String playerName) {
+        points.put(playerName, 0);
+        AchieveData.saveData();
+    }
+
 }

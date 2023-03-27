@@ -12,20 +12,30 @@ public class AdvancementListener implements Listener {
     @EventHandler
     public void onPlayerAdvancement(PlayerAdvancementDoneEvent event) {
         Advancement advancement = event.getAdvancement();
+        // if advancement is null, crafting advancement
+        if (advancement == null || advancement.getDisplay() == null) {
+            return;
+        }
         Player player = event.getPlayer();
+
         org.bukkit.advancement.AdvancementDisplayType type = advancement.getDisplay().getType();
 
         if (type.equals(AdvancementDisplayType.CHALLENGE)) {
-            System.out.println("CHALLENGE");
+            // System.out.println("CHALLENGE");
             AchievePoints.addPoints(player, 15);
         }
         if (type.equals(AdvancementDisplayType.GOAL)) {
-            System.out.println("GOAL");
+            // System.out.println("GOAL");
             AchievePoints.addPoints(player, 10);
         }
         if (type.equals(AdvancementDisplayType.TASK)) {
-            System.out.println("TASK");
+            // System.out.println("TASK");
             AchievePoints.addPoints(player, 5);
+        }
+        // if advancement is a crafting advancement ignore it
+        if (advancement.getKey().getKey().contains("recipes")) {
+            // System.out.println("CRAFTING");
+            return;
         }
     }
 
