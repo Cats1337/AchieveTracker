@@ -263,7 +263,7 @@ public class AchieveCommands implements CommandExecutor {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                             "&b" + player.getName() + " &7has &b" + points + " &7points!"));
                 }
-                // if player is not found, check if the player is in the achieves.txt file by using playerCheck()
+                // if player is not found, check if the player is in the achieves.yml file by using playerCheck()
                 if (player == null && AchieveData.playerCheck(args[0]) != null) {
 
                     String offlinePlayer = AchieveData.playerCheck(args[0]);
@@ -274,7 +274,7 @@ public class AchieveCommands implements CommandExecutor {
                             "&3" + offlinePlayerName + " &7has &b" + offlinePlayerPoints + " &7points!"));
                 } 
 
-                // if not a player, and not a command, and not a player in the achieves.txt file, then the player is not found
+                // if not a player, and not a command, and not a player in the achieves.yml file, then the player is not found
                 else if (args.length == 1 && player == null && AchieveData.playerCheck(args[0]) == null && !args[0].equalsIgnoreCase("help") && !args[0].equalsIgnoreCase("set") && !args[0].equalsIgnoreCase("add") && !args[0].equalsIgnoreCase("remove") && !args[0].equalsIgnoreCase("reset") && !args[0].equalsIgnoreCase("leaderboard") && !args[0].equalsIgnoreCase("lb")) {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Player not found!"));
                 }
