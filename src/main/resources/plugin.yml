@@ -59,7 +59,7 @@ commands:
     points:
       description: Show your points or someone else's points
       usage: /points
-      aliases: [setpoints, addpoints, removepoints, resetpoints]
+      # aliases: [setpoints, addpoints, removepoints, resetpoints]
 
     pointsset:
       description: Set points

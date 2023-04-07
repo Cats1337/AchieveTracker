@@ -170,15 +170,14 @@ public class AchieveData {
                 return Integer.compare(points2, points1);
             }
         });
-        int place = 1;
-        for (String line : lines) {
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
             String[] tokens = line.split(",");
             UUID uuid = UUID.fromString(tokens[0]);
             int points = Integer.parseInt(tokens[1]);
             config.set(uuid.toString(), points);
-            config.set(uuid.toString() + ".place", place);
-            place++;
         }
+        
         try {
             config.save(file);
         } catch (IOException e) {
