@@ -13,7 +13,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class AchieveHolograms{
     public static Plugin plugin = AchieveMain.getPlugin(AchieveMain.class); // The plugin instance
-    static Location where = new Location(Bukkit.getWorld("world"), 0, 0, 0); // the location of the hologram
+    static Location where = new Location(Bukkit.getWorld("world"), Bukkit.getWorld("world").getSpawnLocation().getX(), Bukkit.getWorld("world").getSpawnLocation().getY() + 5, Bukkit.getWorld("world").getSpawnLocation().getZ()); // the location of the hologram (spawn)
     static HolographicDisplaysAPI api = HolographicDisplaysAPI.get(plugin); // The API instance for your plugin
     static Hologram hologram = api.createHologram(where); // Create a new hologram at the given location
 

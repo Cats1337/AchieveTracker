@@ -15,7 +15,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import net.md_5.bungee.api.ChatColor;
@@ -97,6 +99,11 @@ public class AchieveData {
     public static void loadData() {
         File file = new File("plugins/AchieveTracker/Achieves.yml");
         if (file.exists()) {
+            try {
+                sortData();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             HashSet<UUID> previouslyOnlinePlayers = new HashSet<>();
             HashMap<UUID, Integer> playerPoints = new HashMap<>();
@@ -127,9 +134,10 @@ public class AchieveData {
             AchievePoints.joinSet(player, points);
         } else {
             config.set(playerID.toString(), AchievePoints.getPoints(player));
+            // saveData();
             try {
-                config.save(file);
-            } catch (IOException e) {
+                sortData();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -143,46 +151,41 @@ public class AchieveData {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         if (config.contains(playerID.toString())) {
             config.set(playerID.toString(), AchievePoints.getPoints(player));
+            // saveData();
             try {
-                config.save(file);
-            } catch (IOException e) {
+                sortData();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
     // sort data in file by points, highest to lowest
-    public static void sortData() {
+    public static void sortData() throws Exception {
+        // read data from file into a map of UUIDs and points
+        Map<UUID, Integer> data = new HashMap<>();
         File file = new File("plugins/AchieveTracker/Achieves.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        ArrayList<String> lines = new ArrayList<>();
-        for (String playerId : config.getKeys(false)) {
-            UUID uuid = UUID.fromString(playerId);
-            int points = config.getInt(playerId);
-            lines.add(uuid.toString() + "," + points);
+        for (String uuidString : config.getKeys(false)) {
+            UUID uuid = UUID.fromString(uuidString);
+            int points = config.getInt(uuidString);
+            data.put(uuid, points);
         }
-        Collections.sort(lines, new Comparator<String>() {
-            public int compare(String s1, String s2) {
-                String[] tokens1 = s1.split(",");
-                String[] tokens2 = s2.split(",");
-                int points1 = Integer.parseInt(tokens1[1]);
-                int points2 = Integer.parseInt(tokens2[1]);
-                return Integer.compare(points2, points1);
+
+        // sort map by points descending
+        List<Entry<UUID, Integer>> entries = new ArrayList<>(data.entrySet());
+        Collections.sort(entries, new Comparator<Entry<UUID, Integer>>() {
+            public int compare(Entry<UUID, Integer> entry1, Entry<UUID, Integer> entry2) {
+                return Integer.compare(entry2.getValue(), entry1.getValue());
             }
         });
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-            String[] tokens = line.split(",");
-            UUID uuid = UUID.fromString(tokens[0]);
-            int points = Integer.parseInt(tokens[1]);
-            config.set(uuid.toString(), points);
+
+        // save sorted data to file (overwriting existing file)
+        config = new YamlConfiguration();
+        for (Entry<UUID, Integer> entry : entries) {
+            config.set(entry.getKey().toString(), entry.getValue());
         }
-        
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        config.save(file);
     }
 
     // get player points from file
@@ -196,14 +199,26 @@ public class AchieveData {
 
     // get player place from file
     public static int getPlayerPlace(Player player) {
+        try {
+            sortData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (player == null) {
             return 0;
         }
         UUID playerID = player.getUniqueId();
         File file = new File("plugins/AchieveTracker/Achieves.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        int place = config.getInt(playerID.toString() + ".place");
-        return place;
+        // get the line number of the player
+        int lineNumber = 0;
+        for (String playerId : config.getKeys(false)) {
+            lineNumber++;
+            if (playerId.equals(playerID.toString())) {
+                break;
+            }
+        }
+        return lineNumber;
     }
 
     // get top 10 players from file
@@ -211,28 +226,15 @@ public class AchieveData {
         ArrayList<String> top10 = new ArrayList<>();
         File file = new File("plugins/AchieveTracker/Achieves.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        ArrayList<String> lines = new ArrayList<>();
-        for (String playerId : config.getKeys(false)) {
-            UUID uuid = UUID.fromString(playerId);
-            int points = config.getInt(playerId);
-            lines.add(uuid.toString() + "," + points);
-        }
-        Collections.sort(lines, new Comparator<String>() {
-            public int compare(String s1, String s2) {
-                String[] tokens1 = s1.split(",");
-                String[] tokens2 = s2.split(",");
-                int points1 = Integer.parseInt(tokens1[1]);
-                int points2 = Integer.parseInt(tokens2[1]);
-                return Integer.compare(points2, points1);
-            }
-        });
-        int place = 1;
-        for (String line : lines) {
-            String[] tokens = line.split(",");
-            UUID uuid = UUID.fromString(tokens[0]);
-            int points = Integer.parseInt(tokens[1]);
+        List<String> playerIds = new ArrayList<>(config.getKeys(false));
+        playerIds.sort((id1, id2) -> Integer.compare(config.getInt(id2), config.getInt(id1)));
+        int place = 0;
+        // while there are still lines in the file and the place is less than 10
+        while (place < playerIds.size() && place < 10) {
+            UUID id = UUID.fromString(playerIds.get(place));
+            int points = config.getInt(playerIds.get(place));
             top10.add(ChatColor.translateAlternateColorCodes('&',
-                    "&e" + place + ". &a" + Bukkit.getOfflinePlayer(uuid).getName() + " &7- &6" + points));
+                    "&e" + (place + 1) + ". &a" + Bukkit.getOfflinePlayer(id).getName() + " &7- &6" + points));
             place++;
             if (place == 11) {
                 break;
@@ -242,61 +244,50 @@ public class AchieveData {
     }
 
     // get leaderboard from file
-public static ArrayList<String> getLeaderboard(Player player) {
-    saveData();
-    try {
-        sortData();
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    ArrayList<String> leaderboard = new ArrayList<>();
-    File file = new File("plugins/AchieveTracker/Achieves.yml");
-    YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-    int place = 0;
-    leaderboard.add(ChatColor.translateAlternateColorCodes('&', "&2&l&nPoints&r &e&l&nLeaderboard"));
-    place++;
+    public static ArrayList<String> getLeaderboard(Player player) {
+        saveData();
 
-    ArrayList<String> lines = new ArrayList<>();
-    for (String playerId : config.getKeys(false)) {
-        UUID uuid = UUID.fromString(playerId);
-        int points = config.getInt(playerId);
-        lines.add(uuid.toString() + "," + points);
-    }
-    Collections.sort(lines, new Comparator<String>() {
-        public int compare(String s1, String s2) {
-            String[] tokens1 = s1.split(",");
-            String[] tokens2 = s2.split(",");
-            int points1 = Integer.parseInt(tokens1[1]);
-            int points2 = Integer.parseInt(tokens2[1]);
-            return Integer.compare(points2, points1);
+        try {
+            sortData();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    });
 
-    for (String line : lines) {
-        String[] tokens = line.split(",");
-        UUID uuid = UUID.fromString(tokens[0]);
-        int points = Integer.parseInt(tokens[1]);
+        ArrayList<String> leaderboard = new ArrayList<>();
+        File file = new File("plugins/AchieveTracker/Achieves.yml");
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
 
-        // if player, add with different color
-        if (place == getPlayerPlace(player) + 1) {
-            leaderboard.add(ChatColor.translateAlternateColorCodes('&', "&e" + place + ". &b&l" + Bukkit.getOfflinePlayer(uuid).getName() + " &7- &6" + points + " &8(You)"));
-            place++;
-        } else { // if not player, add placeholder
-            leaderboard.add(ChatColor.translateAlternateColorCodes('&', "&e" + place + ". &a" + Bukkit.getOfflinePlayer(uuid).getName() + " &7- &6" + points));
-            place++;
+        int place = 1;
+        leaderboard.add(ChatColor.translateAlternateColorCodes('&', "&2&l&nPoints&r &e&l&nLeaderboard"));
+
+        List<String> keys = new ArrayList<>(yaml.getKeys(false));
+        for (String key : keys) {
+            UUID id = UUID.fromString(key);
+            int points = yaml.getInt(key);
+
+            // if player, add with different color
+            if (id.equals(player.getUniqueId())) {
+                leaderboard.add(ChatColor.translateAlternateColorCodes('&',
+                        "&e" + place + ". &b&l" + player.getName() + " &7- &6" + points + " &8(You)"));
+                place++;
+            } else { // if not player, add placeholder
+                leaderboard.add(ChatColor.translateAlternateColorCodes('&',
+                        "&e" + place + ". &a" + Bukkit.getOfflinePlayer(id).getName() + " &7- &6" + points));
+                place++;
+            }
+            if (place == 11) {
+                break;
+            }
         }
-        if (place == 11) {
-            break;
-        }
-    }
-        leaderboard.add(ChatColor.translateAlternateColorCodes('&', "&eYou're in &b" + placeSuffix(player) + "&e place with &b" + AchievePoints.getPoints(player) + "&e points!"));
+        leaderboard.add(ChatColor.translateAlternateColorCodes('&', "&eYou're in &b" + placeSuffix(player)
+                + "&e place with &b" + AchievePoints.getPoints(player) + "&e points!"));
 
         return leaderboard;
     }
 
     public static String placeSuffix(Player player) {
         // get the player's rank
-        int playerPlace = getPlayerPlace(player) + 1;
+        int playerPlace = getPlayerPlace(player);
 
         // determine the suffix to add
         String suffix;
@@ -317,8 +308,7 @@ public static ArrayList<String> getLeaderboard(Player player) {
         return rankWithSuffix;
     }
 
-
-    //check if player is in file, if true return their name and points
+    // check if player is in file, if true return their name and points
     public static String playerCheck(String playerName) {
         File file = new File("plugins/AchieveTracker/Achieves.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
@@ -342,46 +332,45 @@ public static ArrayList<String> getLeaderboard(Player player) {
     }
 
     // create hologram file
-public static void createHologramFile() {
-    File file = new File("plugins/AchieveTracker/Holograms.yml");
-    if (!file.exists()) {
+    public static void createHologramFile() {
+        File file = new File("plugins/AchieveTracker/Holograms.yml");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // save hologram location in file
+    public static void saveHologramData() {
+        // save x, y, z coordinates of hologram
+        Location location = AchieveHolograms.getHologramLocation().toLocation();
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("worldName", location.getWorld().getName());
+        config.set("x", location.getX());
+        config.set("y", location.getY());
+        config.set("z", location.getZ());
+
         try {
-            file.createNewFile();
+            config.save(new File("plugins/AchieveTracker/Holograms.yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-}
 
-// save hologram location in file
-public static void saveHologramData() {
-    // save x, y, z coordinates of hologram
-    Location location = AchieveHolograms.getHologramLocation().toLocation();
-    YamlConfiguration config = new YamlConfiguration();
-    config.set("worldName", location.getWorld().getName());
-    config.set("x", location.getX());
-    config.set("y", location.getY());
-    config.set("z", location.getZ());
+    // load hologram data from file
+    public static void loadHologramData() {
+        File file = new File("plugins/AchieveTracker/Holograms.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-    try {
-        config.save(new File("plugins/AchieveTracker/Holograms.yml"));
-    } catch (IOException e) {
-        e.printStackTrace();
+        String worldName = config.getString("worldName");
+        double x = config.getDouble("x");
+        double y = config.getDouble("y");
+        double z = config.getDouble("z");
+
+        AchieveHolograms.hologram.setPosition(new Location(Bukkit.getWorld(worldName), x, y, z));
     }
-}
-
-// load hologram data from file
-public static void loadHologramData() {
-    File file = new File("plugins/AchieveTracker/Holograms.yml");
-    YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-
-    String worldName = config.getString("worldName");
-    double x = config.getDouble("x");
-    double y = config.getDouble("y");
-    double z = config.getDouble("z");
-
-    AchieveHolograms.hologram.setPosition(new Location(Bukkit.getWorld(worldName), x, y, z));
-}
-
 
 }
