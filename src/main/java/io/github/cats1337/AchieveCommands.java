@@ -238,17 +238,34 @@ public class AchieveCommands implements CommandExecutor {
                 }
                 return true;
             }
-            else if (args.length == 1 && args[0].equalsIgnoreCase("leaderboard") || args[0].equalsIgnoreCase("lb")) {
+            // /points leaderboard or /points lb
+            else if (args.length == 1 && (args[0].equalsIgnoreCase("leaderboard") || args[0].equalsIgnoreCase("lb"))) {
                 Player cmdSender = (Player) sender;
-                if (cmdSender.hasPermission("points.leaderboard")) {
-                    ArrayList<String> leaderboard = AchieveData.getLeaderboard(cmdSender);
+                    ArrayList<String> leaderboard = AchieveData.getLeaderboard(cmdSender, 1);
                     for (int i = 0; i < leaderboard.size(); i++) {
                         // print each line of the leaderboard
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', leaderboard.get(i)));
                     }
-                } else {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission to use this command!"));
-                }
+                return true;
+            }
+            // /points leaderboard <page>
+            else if (args.length == 2 && (args[0].equalsIgnoreCase("leaderboard") || args[0].equalsIgnoreCase("lb"))) {
+                Player cmdSender = (Player) sender;
+                    try {
+                        int page = Integer.parseInt(args[1]);
+                        if (page <= 0) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                    "&cPage number must be greater than 0!"));
+                            return true;
+                        }
+                        ArrayList<String> leaderboard = AchieveData.getLeaderboard(cmdSender, page);
+                        for (int i = 0; i < leaderboard.size(); i++) {
+                            // print each line of the leaderboard
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', leaderboard.get(i)));
+                        }
+                    } catch (NumberFormatException e) {
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cInvalid page number!"));
+                    }
                 return true;
             }
 

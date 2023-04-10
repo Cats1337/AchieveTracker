@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.UUID;
 
 import net.md_5.bungee.api.ChatColor;
@@ -25,6 +27,9 @@ import net.md_5.bungee.api.ChatColor;
 public class AchieveData {
     public final HashSet<UUID> previouslyOnlinePlayers;
     public final HashMap<UUID, Integer> playerPoints;
+    
+    private static final Pattern HEX_PATTERN = Pattern.compile("&#([0-9a-fA-F]){6}");
+    static final String PLB = colorizeHex("&#00E259&l&nP&#00D657&l&no&#00CA56&l&ni&#00BF54&l&nn&#00B353&l&nt&#00A751&l&ns&r &#FFE259&l&nL&#FFDC58&l&ne&#FFD657&l&na&#FFD057&l&nd&#FFCA56&l&ne&#FFC555&l&nr&#FFBF54&l&nb&#FFB953&l&no&#FFB353&l&na&#FFAD52&l&nr&#FFA751&l&nd&r");
 
     public AchieveData(final HashSet<UUID> previouslyOnlinePlayers, final HashMap<UUID, Integer> playerPoints) {
         this.previouslyOnlinePlayers = previouslyOnlinePlayers;
@@ -34,6 +39,19 @@ public class AchieveData {
     public AchieveData(final AchieveData loadedData) {
         this.playerPoints = loadedData.playerPoints;
         this.previouslyOnlinePlayers = loadedData.previouslyOnlinePlayers;
+    }
+
+    public static String colorize(String str) {
+        return ChatColor.translateAlternateColorCodes('&', str);
+    }
+
+    public static String colorizeHex(String str) {
+        Matcher matcher = HEX_PATTERN.matcher(str);
+        while (matcher.find()) {
+            String group = matcher.group();
+            str = str.replace(group, ChatColor.of(group.substring(1)).toString());
+        }
+        return colorize(str);
     }
 
     // check if file exists, if it does, load it if file doesn't exist, create it
@@ -237,6 +255,15 @@ public class AchieveData {
                     "&e" + (place + 1) + ". &a" + Bukkit.getOfflinePlayer(id).getName() + " &7- &6" + points));
             place++;
             if (place == 11) {
+                // get the player looking at the leaderboard
+                Player player = Bukkit.getServer().getPlayer(playerIds.get(place));
+                // if the player is online, add them to the leaderboard
+                if (player != null && player.isOnline()) {
+                    top10.add(ChatColor.translateAlternateColorCodes('&', "&e You are in &a" + placeSuffix(player)
+                            + "&e place with &a" + getPlayerPoints(player) + "&e points!"));
+                }
+            }
+            if (place == 12) {
                 break;
             }
         }
@@ -244,7 +271,7 @@ public class AchieveData {
     }
 
     // get leaderboard from file
-    public static ArrayList<String> getLeaderboard(Player player) {
+    public static ArrayList<String> getLeaderboard(Player player, int page) {
         saveData();
 
         try {
@@ -257,11 +284,15 @@ public class AchieveData {
         File file = new File("plugins/AchieveTracker/Achieves.yml");
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
 
-        int place = 1;
-        leaderboard.add(ChatColor.translateAlternateColorCodes('&', "&2&l&nPoints&r &e&l&nLeaderboard"));
+        int startIndex = (page - 1) * 10; 
+        int endIndex = startIndex + 10;
+        int place = startIndex + 1;
+
+        leaderboard.add(ChatColor.translateAlternateColorCodes('&', PLB + " &8- Page " + page));
 
         List<String> keys = new ArrayList<>(yaml.getKeys(false));
-        for (String key : keys) {
+        for (int i = startIndex; i < endIndex && i < keys.size(); i++) {
+            String key = keys.get(i);
             UUID id = UUID.fromString(key);
             int points = yaml.getInt(key);
 
@@ -274,9 +305,6 @@ public class AchieveData {
                 leaderboard.add(ChatColor.translateAlternateColorCodes('&',
                         "&e" + place + ". &a" + Bukkit.getOfflinePlayer(id).getName() + " &7- &6" + points));
                 place++;
-            }
-            if (place == 11) {
-                break;
             }
         }
         leaderboard.add(ChatColor.translateAlternateColorCodes('&', "&eYou're in &b" + placeSuffix(player)

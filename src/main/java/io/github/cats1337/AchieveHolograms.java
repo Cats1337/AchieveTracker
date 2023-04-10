@@ -1,7 +1,6 @@
 package io.github.cats1337;
 
 import java.util.ArrayList;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
@@ -14,6 +13,7 @@ import net.md_5.bungee.api.ChatColor;
 public class AchieveHolograms{
     public static Plugin plugin = AchieveMain.getPlugin(AchieveMain.class); // The plugin instance
     static Location where = new Location(Bukkit.getWorld("world"), Bukkit.getWorld("world").getSpawnLocation().getX(), Bukkit.getWorld("world").getSpawnLocation().getY() + 5, Bukkit.getWorld("world").getSpawnLocation().getZ()); // the location of the hologram (spawn)
+    // world
     static HolographicDisplaysAPI api = HolographicDisplaysAPI.get(plugin); // The API instance for your plugin
     static Hologram hologram = api.createHologram(where); // Create a new hologram at the given location
 
@@ -22,7 +22,7 @@ public class AchieveHolograms{
     }
 
     public static void createPlaceHologram() {
-        hologram.getLines().appendText(ChatColor.translateAlternateColorCodes('&', "&2&l&nPoints&r &e&l&nLeaderboard"));
+        hologram.getLines().appendText(AchieveData.PLB);
 
         ArrayList<String> top10 = AchieveData.getTop10();
         
@@ -33,13 +33,10 @@ public class AchieveHolograms{
                 hologram.getLines().appendText(top10.get(i));
             }
         }
-        // add line at the end showing the player's place
-        // hologram.getLines().appendText(ChatColor.translateAlternateColorCodes('&', "&eYou are [place] with [points] points"));
-        // Haven't figured out the IndividualPlaceholder yet, so I'll just leave it like this for now
 
-        // Move the hologram to the correct location
         AchieveData.checkHologramFile();
     }
+
 
     public static void updateHologram() {
         AchieveData.saveData(); // save the data, updating it
@@ -70,6 +67,31 @@ public class AchieveHolograms{
                 }
             }
         }
+    
+        // VisibilitySettings vis = hologram.getVisibilitySettings();
+        // Position hologramPosition = hologram.getPosition();
+        // World world = Bukkit.getWorld(hologramPosition.getWorldName());
+        // Location location = hologramPosition.toLocation();
+        // if (world != null) {
+        //     double x = location.getX();
+        //     double y = location.getY();
+        //     double z = location.getZ();
+        //     int radius = 5; // adjust as needed
+        //     List<Player> nearbyPlayers = world.getNearbyEntities(location, radius, radius, radius).stream()
+        //             .filter(entity -> entity instanceof Player).map(entity -> (Player) entity)
+        //             .collect(Collectors.toList());
+        //     if (!nearbyPlayers.isEmpty()) {
+        //         Player player = nearbyPlayers.get(0); // get the closest player
+        //         vis.setIndividualVisibility(player, Visibility.VISIBLE);
+        //         vis.setGlobalVisibility(Visibility.HIDDEN);
+        //         AchieveMain.LOGGER.info("Player " + player.getName() + " is looking at the hologram");
+        //         hologram.getLines().appendText(player.getName());
+        //         // show only the last line to the player looking at the hologram
+        //         vis.setIndividualVisibility(player, Visibility.VISIBLE);
+        //         vis.setGlobalVisibility(Visibility.HIDDEN);
+        //     }
+        // }
+
         
     }
 
