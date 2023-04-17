@@ -3,6 +3,7 @@ package io.github.cats1337;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -138,7 +139,23 @@ public class AchieveData {
                 }
             }
         }
+        File file2 = new File("plugins/AchieveTracker/Hologram.yml");
+        if (!file2.exists()) {
+            createHologramFile();
+        }
+        // load the holograms positions from the file
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        if (config.contains("Hologram")) {
+            double x = config.getDouble("x");
+            double y = config.getDouble("y");
+            double z = config.getDouble("z");
+            World world = Bukkit.getWorld(config.getString("worldName"));
+            Location loc = new Location(world, x, y, z);
+            // set the location of the hologram
+            AchieveHolograms.hologram.setPosition(loc);
+        }
     }
+
 
     // When player joins, check if they are in the file, if they are, load their
     // points if they aren't, add them to the file
