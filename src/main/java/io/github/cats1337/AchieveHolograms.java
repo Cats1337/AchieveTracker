@@ -13,7 +13,6 @@ import net.md_5.bungee.api.ChatColor;
 public class AchieveHolograms{
     public static Plugin plugin = AchieveMain.getPlugin(AchieveMain.class); // The plugin instance
     static Location where = new Location(Bukkit.getWorld("world"), Bukkit.getWorld("world").getSpawnLocation().getX(), Bukkit.getWorld("world").getSpawnLocation().getY() + 5, Bukkit.getWorld("world").getSpawnLocation().getZ()); // the location of the hologram (spawn)
-    // world
     static HolographicDisplaysAPI api = HolographicDisplaysAPI.get(plugin); // The API instance for your plugin
     static Hologram hologram = api.createHologram(where); // Create a new hologram at the given location
     
@@ -25,7 +24,7 @@ public class AchieveHolograms{
         hologram.getLines().appendText(AchieveData.PLB);
 
         ArrayList<String> top10 = AchieveData.getTop10();
-        
+
         for(int i = 0; i < Math.min(top10.size(), 11); i++) {
             if (top10.get(i) == null) {
                 hologram.getLines().appendText(ChatColor.translateAlternateColorCodes('&', "&e" + (i + 1) + ". &a  &8- &6 "));
@@ -39,9 +38,9 @@ public class AchieveHolograms{
 
 
     public static void updateHologram() {
-        AchieveData.saveData(); // save the data, updating it
+        AchieveData.saveAchieveData(); // save the data, updating it
         try {
-            AchieveData.sortData();
+            AchieveData.sortAchieveData();
         } catch (Exception e) {
             e.printStackTrace();
         } // sort the data

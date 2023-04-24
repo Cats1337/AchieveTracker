@@ -63,7 +63,7 @@ public class AchievePoints {
     // set offline player's points
     public static void setOfflinePoints(String playerName, int amount) {
         points.put(playerName, amount);
-        AchieveData.saveData();
+        AchieveData.saveAchieveData();
     }
 
     // get offline player's points
@@ -78,20 +78,20 @@ public class AchievePoints {
     public static void addOfflinePoints(String playerName, int amount) {
         int currentPoints = getOfflinePoints(playerName);
         points.put(playerName, currentPoints + amount);
-        AchieveData.saveData();
+        AchieveData.saveAchieveData();
     }
 
     // remove offline player's points
     public static void removeOfflinePoints(String playerName, int amount) {
         int currentPoints = getOfflinePoints(playerName);
         points.put(playerName, Math.max(0, currentPoints - amount));
-        AchieveData.saveData();
+        AchieveData.saveAchieveData();
     }
 
     // reset offline player's points
     public static void resetOfflinePoints(String playerName) {
         points.put(playerName, 0);
-        AchieveData.saveData();
+        AchieveData.saveAchieveData();
     }
 
 }

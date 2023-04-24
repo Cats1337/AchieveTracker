@@ -56,16 +56,16 @@ public class AchieveData {
     }
 
     // check if file exists, if it does, load it if file doesn't exist, create it
-    public static void checkFile() {
+    public static void checkAchieveFile() {
         File file = new File("plugins/AchieveTracker/Achieves.yml");
         if (file.exists()) {
-            loadData();
+            loadAchieveData();
         } else {
-            createFile();
+            createAchieveFile();
         }
     }
 
-    public static void createFile() {
+    public static void createAchieveFile() {
         File folder = new File("plugins/AchieveTracker");
         if (!folder.exists()) {
             folder.mkdir();
@@ -80,7 +80,7 @@ public class AchieveData {
         }
     }
 
-    public static void saveData() {
+    public static void saveAchieveData() {
         final Map<UUID, Integer> pointsMap = new HashMap<>();
         // Load existing data
         File file = new File("plugins/AchieveTracker/Achieves.yml");
@@ -115,11 +115,11 @@ public class AchieveData {
         }
     }
 
-    public static void loadData() {
+    public static void loadAchieveData() {
         File file = new File("plugins/AchieveTracker/Achieves.yml");
         if (file.exists()) {
             try {
-                sortData();
+                sortAchieveData();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -139,21 +139,6 @@ public class AchieveData {
                 }
             }
         }
-        File file2 = new File("plugins/AchieveTracker/Hologram.yml");
-        if (!file2.exists()) {
-            createHologramFile();
-        }
-        // load the holograms positions from the file
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file2);
-        if (config.contains("Hologram")) {
-            double x = config.getDouble("x");
-            double y = config.getDouble("y");
-            double z = config.getDouble("z");
-            World world = Bukkit.getWorld(config.getString("worldName"));
-            Location loc = new Location(world, x, y, z);
-            // set the location of the hologram
-            AchieveHolograms.hologram.setPosition(loc);
-        }
     }
 
     // When player joins, check if they are in the file, if they are, load their
@@ -170,7 +155,7 @@ public class AchieveData {
             config.set(playerID.toString(), AchievePoints.getPoints(player));
             // saveData();
             try {
-                sortData();
+                sortAchieveData();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -187,7 +172,7 @@ public class AchieveData {
             config.set(playerID.toString(), AchievePoints.getPoints(player));
             // saveData();
             try {
-                sortData();
+                sortAchieveData();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -195,7 +180,7 @@ public class AchieveData {
     }
 
     // sort data in file by points, highest to lowest
-    public static void sortData() throws Exception {
+    public static void sortAchieveData() throws Exception {
         // read data from file into a map of UUIDs and points
         Map<UUID, Integer> data = new HashMap<>();
         File file = new File("plugins/AchieveTracker/Achieves.yml");
@@ -234,7 +219,7 @@ public class AchieveData {
     // get player place from file
     public static int getPlayerPlace(Player player) {
         try {
-            sortData();
+            sortAchieveData();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -288,10 +273,10 @@ public class AchieveData {
 
     // get leaderboard from file
     public static ArrayList<String> getLeaderboard(Player player, int page) {
-        saveData();
+        saveAchieveData();
 
         try {
-            sortData();
+            sortAchieveData();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -374,7 +359,11 @@ public class AchieveData {
         File file = new File("plugins/AchieveTracker/Holograms.yml");
         if (!file.exists()) {
             createHologramFile();
+            AchieveMain.LOGGER.info("Hologram file created");
+        } else{
+            loadHologramData();
         }
+
         return file.exists();
     }
 
@@ -411,13 +400,21 @@ public class AchieveData {
     public static void loadHologramData() {
         File file = new File("plugins/AchieveTracker/Holograms.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-
-        String worldName = config.getString("worldName");
-        double x = config.getDouble("x");
-        double y = config.getDouble("y");
-        double z = config.getDouble("z");
-
-        AchieveHolograms.hologram.setPosition(new Location(Bukkit.getWorld(worldName), x, y, z));
+        if (config.contains("x") || config.contains("y") || config.contains("z") || config.contains("worldName")) {
+            double x = config.getDouble("x");
+            double y = config.getDouble("y");
+            double z = config.getDouble("z");
+            World world = Bukkit.getWorld(config.getString("worldName"));
+            if (world != null) {
+                Location loc = new Location(world, x, y, z);
+                // set the location of the hologram
+                AchieveHolograms.hologram.setPosition(loc);
+            } else {
+                AchieveMain.LOGGER.warning("Invalid world name in hologram file: " + config.getString("worldName"));
+            }
+        } else {
+            AchieveMain.LOGGER.warning("Missing position information in hologram file");
+        }
     }
 
 }

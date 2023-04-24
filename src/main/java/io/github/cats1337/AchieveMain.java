@@ -12,10 +12,8 @@ import org.bukkit.plugin.Plugin;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.md_5.bungee.api.ChatColor;
-
 public class AchieveMain extends JavaPlugin implements Listener {
-    static final Logger LOGGER = Logger.getLogger(ChatColor.BLUE + "Achieve" + ChatColor.AQUA + "Tracker" + ChatColor.RESET);
+    static final Logger LOGGER = Logger.getLogger("AchieveTracker");
     private boolean useHolographicDisplays;
 
     @Override
@@ -34,14 +32,15 @@ public class AchieveMain extends JavaPlugin implements Listener {
             getServer().getPluginManager().registerEvents(new AdvancementListener(), this);
 
             // makes sure the file exists
-            AchieveData.checkFile();
+            AchieveData.checkAchieveFile();
             try {
-                AchieveData.sortData();
+                AchieveData.sortAchieveData();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            AchieveData.loadData();
+            AchieveData.loadAchieveData();
+            AchieveData.loadHologramData();
             LOGGER.info("Loaded points from file");
             LOGGER.info("Loaded hologram position from file");
 
@@ -66,10 +65,10 @@ public class AchieveMain extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         LOGGER.info("AchieveTracker is disabled!");
-        AchieveData.saveData();
+        AchieveData.saveAchieveData();
         AchieveData.saveHologramData();
         try {
-            AchieveData.sortData();
+            AchieveData.sortAchieveData();
         } catch (Exception e) {
             e.printStackTrace();
         }

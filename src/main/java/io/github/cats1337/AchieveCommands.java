@@ -72,7 +72,7 @@ public class AchieveCommands implements CommandExecutor {
                     else if(player == null && AchieveData.playerCheck(args[1]) == null) {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Player not found!"));
                     }
-                    AchieveData.saveData();
+                    AchieveData.saveAchieveData();
                 }
                 else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cIncorrect usage: /points set <player> <amount>"));
