@@ -16,7 +16,7 @@ public class AchieveHolograms{
     // world
     static HolographicDisplaysAPI api = HolographicDisplaysAPI.get(plugin); // The API instance for your plugin
     static Hologram hologram = api.createHologram(where); // Create a new hologram at the given location
-
+    
     public static Position getHologramLocation() {
         return hologram.getPosition();
     }

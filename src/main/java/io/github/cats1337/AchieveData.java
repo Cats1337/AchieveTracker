@@ -144,7 +144,7 @@ public class AchieveData {
             createHologramFile();
         }
         // load the holograms positions from the file
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file2);
         if (config.contains("Hologram")) {
             double x = config.getDouble("x");
             double y = config.getDouble("y");
@@ -155,7 +155,6 @@ public class AchieveData {
             AchieveHolograms.hologram.setPosition(loc);
         }
     }
-
 
     // When player joins, check if they are in the file, if they are, load their
     // points if they aren't, add them to the file
@@ -373,6 +372,9 @@ public class AchieveData {
 
     public static boolean checkHologramFile() {
         File file = new File("plugins/AchieveTracker/Holograms.yml");
+        if (!file.exists()) {
+            createHologramFile();
+        }
         return file.exists();
     }
 

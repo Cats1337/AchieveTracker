@@ -12,8 +12,10 @@ import org.bukkit.plugin.Plugin;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class AchieveMain extends JavaPlugin implements Listener {
-    static final Logger LOGGER = Logger.getLogger("achievetracker");
+    static final Logger LOGGER = Logger.getLogger(ChatColor.BLUE + "Achieve" + ChatColor.AQUA + "Tracker" + ChatColor.RESET);
     private boolean useHolographicDisplays;
 
     @Override
@@ -40,7 +42,8 @@ public class AchieveMain extends JavaPlugin implements Listener {
             }
 
             AchieveData.loadData();
-            System.out.println("Loaded points from file");
+            LOGGER.info("Loaded points from file");
+            LOGGER.info("Loaded hologram position from file");
 
             final AchieveCommands commands = new AchieveCommands();
                 this.getCommand("points").setExecutor((CommandExecutor)commands);
