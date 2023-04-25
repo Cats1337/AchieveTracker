@@ -17,7 +17,21 @@ public class AchieveCommands implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // if console sends command, tell it they can't and need to be a player
         if (!(sender instanceof Player)) {
-            sender.sendMessage("You must be a player to use points commands!");
+            // sender.sendMessage("You must be a player to use points commands!");
+            if (args.length == 3 && args[0].equalsIgnoreCase("add")) {
+                    Player player = Bukkit.getPlayer(args[1]);
+                    int amount = Integer.parseInt(args[2]);
+                    // add points to the player if they are online
+                    if (player != null) {
+                        AchievePoints.addPoints(player, amount);
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7You have been given &a+" + amount + " &7points!"));
+                        AchieveMain.LOGGER.info("Console added " + amount + " points to " + player.getName() + "!");
+                    // add points to the offline player if they exist in the database
+                } else {
+                    AchieveMain.LOGGER.info(ChatColor.translateAlternateColorCodes('&', "&cIncorrect usage: /points add <player> <amount>"));
+            }
+            return true;
+        }
             return true;
         }
         // get own points /points
